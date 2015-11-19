@@ -26,6 +26,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private static final String SCAN_QR_INTENT_ID = "com.google.zxing.client.android.SCAN";
+    public final static String EXTRA_MESSAGE = "com.example.lmora.myapplication.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(scanQRIntent, 0);
             }
         });
+    }
+
+    private void startDocumentView(String qrCode) {
+        Intent intent = new Intent(this, DocumentActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, qrCode);
+        startActivity(intent);
     }
 
     private static final String DOCUMENT_ENDPOINT_URI = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
@@ -91,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int resultCode, int requestCode, Intent intent) {
         if (resultCode == 0) {
             String documentCode = intent.getStringExtra("SCAN_RESULT");
+            startDocumentView(documentCode);
         }
 
 //    private class DownloadDocTask extends AsyncTask<URL, Integer, String> {
