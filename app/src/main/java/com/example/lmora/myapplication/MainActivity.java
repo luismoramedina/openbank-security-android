@@ -1,5 +1,6 @@
 package com.example.lmora.myapplication;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -23,6 +25,8 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SCAN_QR_INTENT_ID = "com.google.zxing.client.android.SCAN";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +38,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                new DownloadDocTask(view).execute();
+                startScanQRIntent();
+            }
+
+            private void startScanQRIntent() {
+                Intent scanQRIntent = new Intent(SCAN_QR_INTENT_ID);
+                scanQRIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(scanQRIntent, 0);
             }
         });
     }
@@ -79,33 +87,40 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DownloadDocTask extends AsyncTask<URL, Integer, String> {
-        private final View view;
-
-        public DownloadDocTask(View view) {
-            this.view = view;
+    @Override
+    public void onActivityResult(int resultCode, int requestCode, Intent intent) {
+        if (resultCode == 0) {
+            String documentCode = intent.getStringExtra("SCAN_RESULT");
         }
 
-        protected String doInBackground(URL... urls) {
-            // Create connection objects
-            HttpClient httpClient = new DefaultHttpClient();
-            URI endpointUri = null;
-            String str = null;
-            try {
-                str = doHttpConnection();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return str;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            //setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(String result) {
-            Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        }
-
+//    private class DownloadDocTask extends AsyncTask<URL, Integer, String> {
+//        private final View view;
+//
+//        public DownloadDocTask(View view) {
+//            this.view = view;
+//        }
+//
+//        protected String doInBackground(URL... urls) {
+//            // Create connection objects
+//            HttpClient httpClient = new DefaultHttpClient();
+//            URI endpointUri = null;
+//            String str = null;
+//            try {
+//                str = doHttpConnection();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return str;
+//        }
+//
+//        protected void onProgressUpdate(Integer... progress) {
+//            //setProgressPercent(progress[0]);
+//        }
+//
+//        protected void onPostExecute(String result) {
+//            Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//        }
+//
+//    }
     }
 }
