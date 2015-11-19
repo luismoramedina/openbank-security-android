@@ -23,10 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DocumentActivity"
-            android:label="Vista previa del documento"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ResultActivity"
             android:label="@string/title_activity_result"
             android:theme="@style/AppTheme.NoActionBar" >
