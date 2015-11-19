@@ -17,7 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -37,18 +36,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                try {
-                    String s = doHttpConnection();
-                    Snackbar.make(view, s, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                } catch (Exception e) {
-                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    e.printStackTrace();
-                }
+                new DownloadDocTask(view).execute();
             }
         });
     }
 
     private static final String DOCUMENT_ENDPOINT_URI = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
+
     private String doHttpConnection() throws URISyntaxException, IOException {
         // Create connection objects
 
@@ -85,25 +79,33 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
-        protected Long doInBackground(URL... urls) {
-            int count = urls.length;
-            long totalSize = 0;
-            for (int i = 0; i < count; i++) {
-                //totalSize += Downloader.downloadFile(urls[i]);
-                publishProgress((int) ((i / (float) count) * 100));
-                // Escape early if cancel() is called
-                if (isCancelled()) break;
+    private class DownloadDocTask extends AsyncTask<URL, Integer, String> {
+        private final View view;
+
+        public DownloadDocTask(View view) {
+            this.view = view;
+        }
+
+        protected String doInBackground(URL... urls) {
+            // Create connection objects
+            HttpClient httpClient = new DefaultHttpClient();
+            URI endpointUri = null;
+            String str = null;
+            try {
+                str = doHttpConnection();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return totalSize;
+            return str;
         }
 
         protected void onProgressUpdate(Integer... progress) {
             //setProgressPercent(progress[0]);
         }
 
-        protected void onPostExecute(Long result) {
-            //showDialog("Downloaded " + result + " bytes");
+        protected void onPostExecute(String result) {
+            Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
+
     }
 }
