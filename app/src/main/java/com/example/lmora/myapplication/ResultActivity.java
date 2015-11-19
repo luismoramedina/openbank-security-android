@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -14,11 +15,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -73,13 +77,24 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            //TODO parse json
-            ((TextView) view).setText(result);
+            String fileData;
+            try {
+                JSONObject object = new JSONObject(result);
+                String data = (String) object.get("data");
+                byte[] decode = Base64.decode(data, Base64.DEFAULT);
+                fileData = new String(decode);
+            } catch (Exception e) {
+                fileData = e.getMessage();
+                e.printStackTrace();
+            }
+
+            ((TextView) view).setText(fileData);
         }
 
     }
 
-    private static final String DOCUMENT_ENDPOINT_URI = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
+    private static final String DOCUMENT_ENDPOINT_URI_DROPBOX = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
+    private static final String DOCUMENT_ENDPOINT_URI = "http://172.26.0.132:8080/document?id=blah";
     private String doHttpConnection() throws URISyntaxException, IOException {
         // Create connection objects
 
