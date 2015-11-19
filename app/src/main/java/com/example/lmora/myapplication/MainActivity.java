@@ -1,7 +1,13 @@
 package com.example.lmora.myapplication;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +43,52 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 new DownloadDocTask(view).execute();
+            }
+        });
+        FloatingActionButton fin = (FloatingActionButton) findViewById(R.id.fin);
+        fin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for Activity#requestPermissions for more details.
+                        return;
+                    }
+                }
+                FingerprintManager fingerprintManager = Beans.fingerprintManager(MainActivity.this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    fingerprintManager.authenticate(new FingerprintManager.CryptoObject(
+                            Beans.providesCipher(Beans.providesKeystore())), new CancellationSignal(), 0, new FingerprintManager.AuthenticationCallback() {
+                        @Override
+                        public void onAuthenticationError(int errorCode, CharSequence errString) {
+                            super.onAuthenticationError(errorCode, errString);
+                        }
+
+                        @Override
+                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                            super.onAuthenticationHelp(helpCode, helpString);
+                        }
+
+                        @Override
+                        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                            super.onAuthenticationSucceeded(result);
+                        }
+
+                        @Override
+                        public void onAuthenticationFailed() {
+                            super.onAuthenticationFailed();
+                        }
+                    }, new Handler());
+                }
+                Snackbar.make(view, "Fingerprint", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
             }
         });
     }
