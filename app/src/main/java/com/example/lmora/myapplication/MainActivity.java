@@ -35,10 +35,38 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startViewDocumentActivity("this is a code");
+                //startScanQRIntent();
+            }
+
+            private void startScanQRIntent() {
+                Intent scanQRIntent = new Intent(SCAN_QR_INTENT_ID);
+                scanQRIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(scanQRIntent, 0);
+            }
+        });
+/*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MainActivity.this, ResultActivity.class);
+                startActivity(myIntent);
+            }
+        });
+*/
+
+        /*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startScanQRIntent();
                 startScanQRIntent();
             }
 
@@ -48,28 +76,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(scanQRIntent, 0);
             }
         });
-    }
+        */
+        /*
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                new DownloadDocTask(view).execute();
+            }
 
-    private void startDocumentView(String qrCode) {
-        Intent intent = new Intent(this, DocumentActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, qrCode);
-        startActivity(intent);
-    }
-
-    private static final String DOCUMENT_ENDPOINT_URI = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
-
-    private String doHttpConnection() throws URISyntaxException, IOException {
-        // Create connection objects
-
-        HttpClient httpClient = new DefaultHttpClient();
-//        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        URI endpointUri = new URI(DOCUMENT_ENDPOINT_URI);
-
-        // Make the connection
-        HttpResponse response = httpClient.execute(new HttpGet(endpointUri));
-
-        // Print the results of the document endpoint
-        return IOUtils.toString(response.getEntity().getContent());
+            private void startScanQRIntent() {
+                Intent scanQRIntent = new Intent(SCAN_QR_INTENT_ID);
+                scanQRIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(scanQRIntent, 0);
+            }
+        });
+*/
     }
 
     @Override
@@ -94,41 +117,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * QR read callback
+     */
     @Override
     public void onActivityResult(int resultCode, int requestCode, Intent intent) {
         if (resultCode == 0) {
-            String documentCode = intent.getStringExtra("SCAN_RESULT");
-            startDocumentView(documentCode);
+            if (intent != null) {
+                String qrCode = intent.getStringExtra("SCAN_RESULT");
+                startViewDocumentActivity(qrCode);
+            }
         }
 
-//    private class DownloadDocTask extends AsyncTask<URL, Integer, String> {
-//        private final View view;
-//
-//        public DownloadDocTask(View view) {
-//            this.view = view;
-//        }
-//
-//        protected String doInBackground(URL... urls) {
-//            // Create connection objects
-//            HttpClient httpClient = new DefaultHttpClient();
-//            URI endpointUri = null;
-//            String str = null;
-//            try {
-//                str = doHttpConnection();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return str;
-//        }
-//
-//        protected void onProgressUpdate(Integer... progress) {
-//            //setProgressPercent(progress[0]);
-//        }
-//
-//        protected void onPostExecute(String result) {
-//            Snackbar.make(view, result, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//        }
-//
-//    }
+    }
+
+    private void startViewDocumentActivity(String qrCode) {
+        Intent documentViewIntent = new Intent(this, ResultActivity.class);
+        documentViewIntent.putExtra(EXTRA_MESSAGE, qrCode);
+        startActivity(documentViewIntent);
     }
 }
