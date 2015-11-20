@@ -32,6 +32,8 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    compile 'org.bouncycastle:bcprov-jdk16:1.45'
+    compile 'org.bouncycastle:bcmail-jdk16:1.45'
     compile 'commons-io:commons-io:2.4'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
