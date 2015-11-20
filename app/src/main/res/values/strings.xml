@@ -94,4 +94,5 @@
     </string>
     <string name="action_accept">accept</string>
     <string name="action_reject">reject</string>
+    <string name="title_activity_fingerprint">FingerprintActivity</string>
 </resources>
