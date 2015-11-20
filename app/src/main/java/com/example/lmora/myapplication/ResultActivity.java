@@ -3,6 +3,7 @@ package com.example.lmora.myapplication;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -80,9 +81,15 @@ public class ResultActivity extends AppCompatActivity {
             String fileData;
             try {
                 JSONObject object = new JSONObject(result);
-                String data = (String) object.get("data");
-                byte[] decode = Base64.decode(data, Base64.DEFAULT);
-                fileData = new String(decode);
+                try {
+                    String data = (String) object.get("data");
+                    byte[] decode = Base64.decode(data, Base64.DEFAULT);
+                    fileData = new String(decode);
+                }catch(Exception e){
+                    fileData = (String) object.get("result");
+                    Snackbar.make(view, "Operation locked. Checks your Latch", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             } catch (Exception e) {
                 fileData = e.getMessage();
                 e.printStackTrace();
@@ -94,7 +101,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private static final String DOCUMENT_ENDPOINT_URI_DROPBOX = "https://dl.dropboxusercontent.com/u/1368598/data.txt";
-    private static final String DOCUMENT_ENDPOINT_URI = "http://172.26.0.132:8080/document?id=blah";
+    private static final String DOCUMENT_ENDPOINT_URI = "http://172.26.0.124/document?id=blah";
     private String doHttpConnection() throws URISyntaxException, IOException {
         // Create connection objects
 
